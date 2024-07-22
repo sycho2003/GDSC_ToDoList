@@ -1,6 +1,6 @@
 
 import './App.css';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Routes, Route, Link, useNavigate, Outlet, useParams } from 'react-router-dom'
 import database from './database.js';
 
@@ -58,14 +58,29 @@ function Todolist() {
 
 
 function List(props){
-  let newdata='';
-  let [modify, modifymode] = useState(false);
-  let targetcontent=props.data.find(item => item.date === props.tododate);
+  let [modify, setModify] = useState([]);
+  let [newData, setNewdata] = useState([...props.data]);
+  const inputRefs = useRef([]);
+  let targetIndex = props.data.findIndex(item => item.date === props.tododate);
+  let targetcontent=props.data.find(item => item.date === props.tododate)
+  useEffect(() => {
+    if (targetcontent && targetcontent.content) {
+      setModify(new Array(targetcontent.content.length).fill(false));
+    }
+  }, [targetcontent]); 
+  
+  if (!targetcontent || !targetcontent.content) {
+    return <div>선택한 날짜에 해당하는 데이터가 없습니다.</div>;
+  }
+
   return(
     
-      targetcontent.content.map(function(a){return(
-      <div className="list"><p>{a}<button onClick={()=> {modifymode(true)}}>수정</button> <button>삭제</button> </p>
-      {modify ? <p> <input type="text" value={newdata}></input> <button onClick={()=>{props.rewrite(newdata); modifymode(false);}}>완료</button></p> : null} </div>
+      //아직 서버에 있는걸 직접 바꿀 수는 없어서 사본을 만들어 띄우는 방식... data도 사본, newData도 사본
+
+      newData[targetIndex].content.map(function(a,i){return(
+      <div className="list"><p>{a}<button onClick={()=> { let newModify=[...modify]; newModify[i]=true; setModify(newModify)}}>수정</button> <button>삭제</button> </p>
+      {modify[i] ? <p> <input type="text" ref={(el) => inputRefs.current[i] = el} ></input> <button onClick={(event)=>{ let newerData=[...newData];
+      newerData[targetIndex].content[i] = inputRefs.current[i].value;  setNewdata(newerData); let newModify=[...modify]; newModify[i]=false; setModify(newModify)}}>완료</button></p> : null} </div>
       )})
         
   )
