@@ -75,10 +75,13 @@ function List(props){
 
   return(
     
-      //아직 서버에 있는걸 직접 바꿀 수는 없어서 사본을 만들어 띄우는 방식... data도 사본, newData도 사본
+      //아직 서버에 있는걸 직접 바꿀 수는 없어서 사본을 만들어 띄우는 방식... data도 사본, newData도 사본 
+      //근데 생각해보니 부모에서 data를 받아오는게 아니라 자식(여기)서 data받아오면 되는거잖아?왜 이생각을못햇나
+
 
       newData[targetIndex].content.map(function(a,i){return(
-      <div className="list"><p>{a}<button onClick={()=> { let newModify=[...modify]; newModify[i]=true; setModify(newModify)}}>수정</button> <button>삭제</button> </p>
+      <div className="list"><p>{a}<button onClick={()=> { let newModify=[...modify]; newModify[i]=true; setModify(newModify)}}>수정</button> <button 
+      onClick= {()=>{ let newerData=[...newData]; newerData[targetIndex].content = newerData[targetIndex].content.filter((_, l) => l !== i); setNewdata(newerData);}}> 삭제</button> </p>
       {modify[i] ? <p> <input type="text" ref={(el) => inputRefs.current[i] = el} ></input> <button onClick={(event)=>{ let newerData=[...newData];
       newerData[targetIndex].content[i] = inputRefs.current[i].value;  setNewdata(newerData); let newModify=[...modify]; newModify[i]=false; setModify(newModify)}}>완료</button></p> : null} </div>
       )})
