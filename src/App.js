@@ -27,13 +27,16 @@ function Todolist() {
     }
   }, [tododate, navigate]);
 
+  let targetIndex = data.findIndex(item => item.date === tododate);
+  let targetcontent=data.find(item => item.date === tododate)
+
   return ( // return 소괄호 안에는 병렬로 태그 2개 이상 기입 금지
     
     <div className="App"> 
       <div className="black-nav">
         <h4 style={ {color : 'white', fontSize: '16px'} }> 
           <input type="date" value={tododate} onChange={ (event)=> {changedate(event.target.value); navigate(`/detail/${event.target.value}`);}}/> <input type="text" />의 할 일 
-          <button onClick = {()=>{let newerData=[...data, '']; rewrite(newerData)}}>추가</button>  
+          <button onClick = {()=>{let newdata=[...data]; newdata[targetIndex].content=[...newdata[targetIndex].content, '']; rewrite(newdata)}}>추가</button>  
         </h4>  
       </div> 
         
@@ -91,6 +94,12 @@ function List(props){
 
 }
 
+
+function Add(props){
+
+
+
+}
 
 export default Todolist; 
 
