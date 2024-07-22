@@ -32,7 +32,8 @@ function Todolist() {
     <div className="App"> 
       <div className="black-nav">
         <h4 style={ {color : 'white', fontSize: '16px'} }> 
-          <input type="date" value={tododate} onChange={ (event)=> {changedate(event.target.value); navigate(`/detail/${event.target.value}`);}}/> <input type="text" />의 할 일  
+          <input type="date" value={tododate} onChange={ (event)=> {changedate(event.target.value); navigate(`/detail/${event.target.value}`);}}/> <input type="text" />의 할 일 
+          <button onClick = {()=>{let newerData=[...data, '']; rewrite(newerData)}}>추가</button>  
         </h4>  
       </div> 
         
