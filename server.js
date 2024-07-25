@@ -87,8 +87,15 @@ app.post('/newpost', async(요청,응답)=>{
 app.delete('/delete', async (요청, 응답) => {
   console.log('삭제')
   console.log(요청.query)
-  let result = await db.collection('post').deleteOne( { date : (요청.query.docdate) } )
-  응답.send('삭제완료')
+
+  try{
+    let result = await db.collection('post').updateOne( { _id : new ObjectId (요청.query.id) }, {$pull: {content: decodeURIComponent(요청.query.doccontent)}} )
+    응답.send('삭제완료')
+  }
+  catch(e){
+    console.log('error입니다')
+    응답.send('error입니다')
+  }
 })
 
 // app.delete('/delete', async(요청, 응답)=>{
@@ -101,7 +108,7 @@ app.delete('/delete', async (요청, 응답) => {
 
 
 // 수정 (고쳐야됨)
-app.get('/edit/:date', async (요청, 응답) => {
+app.get('/edit/', async (요청, 응답) => {
   let result = await db.collection('post').findOne({ date : (요청.params.date) },
   function(err,result){
     console.log(result)

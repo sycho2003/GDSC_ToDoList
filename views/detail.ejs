@@ -15,47 +15,60 @@
         <p>디테일</p>
     </div>
 
-    <% for (let i = 0 ; i < result.todo.length; i++){ %>
+    <% for (let i = 0 ; i < result.content.length; i++){ %>
 
     <div class="white-bg">
         <div class="list-box">
-            <h4><%= result.todo[i] %>
-            <a href="/edit/<%= result.todo[i] %>">✏️</a>
-            <span class="delete" data-date="<%= result.todo[i] %>">🗑️</span>
-            <p><%= i %></p>
+            <h4><%= result.content[i] %>
+            <a href="/edit/<%= encodeURIComponent(result.content[i]) %>">
+              <span class="edit" data-content="<%= encodeURIComponent(result.content[i]) %>" data-id="<%= result._id %>">✏️</span>
+            </a>
+            <span class="delete" data-content="<%= encodeURIComponent(result.content[i]) %>" data-id="<%= result._id %>">🗑️</span>
+              <p><%= i %></p>
             </h4>
         </div>
     </div>
 
     <% } %>
 
-    <script src="GDSC_ToDoList-FE/src/App.js"></script>
+    
+<script>
+  document.querySelectorAll('.delete').forEach(element =>{
+    element.addEventListener('click', function(e){
+    // e.target.dataset.id
+    const doccontent = encodeURIComponent(e.target.dataset.content)
+    const id = encodeURIComponent(e.target.dataset.id)
+
+    fetch(`/delete?doccontent=${doccontent}&id=${id}`,{
+      method : 'DELETE'
+    })
+    .then(response => response.text())
+    .then(result=> {
+      location.reload()
+      console.log(result)
+    })
+    .catch(error => console.error(error))
+  }) 
+})
+</script>
+
+
+<script>
+  document.querySelectorAll('.edit')[0].addEventListener('click', function(){
+    fetch('/edit?docdate=' + e.target.dataset.date, {
+      method : 'POST',
+      headers:{
+        'Context=Type' : 'application/json'
+      },
+      body : JSON.stringify({todo : 요청.body.todo[0]})
+    })
+  })
+</script>
+
+</body>
+</html>
+
+
    
 </body>
 </html>
-
-<script>
-    document.querySelectorAll('.delete')[0].addEventListener('click', function(e){
-      // e.target.dataset.id
-      fetch('/delete?docdate=' + e.target.dataset.date,{
-        method : 'DELETE'
-      })
-    }) 
-  </script>
-
-
-  <script>
-    document.querySelectorAll('.edit')[0].addEventListener('click', function(){
-      fetch('/edit?docdate=' + e.target.dataset.date, {
-        method : 'POST',
-        headers:{
-          'Context=Type' : 'application/json'
-        },
-        body : JSON.stringify({todo : 요청.body.todo[0]})
-      })
-    })
-  </script>
-
-</body>
-</html>
-
