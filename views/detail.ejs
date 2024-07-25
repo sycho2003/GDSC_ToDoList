@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detail Page</title>
+    <link href="/main.css" rel = "stylesheet">
+</head>
+<body class="grey-bg">
+
+    <%- include('nav.ejs') %>
+    <%= JSON.stringify(result) %>
+    
+    <div class>
+        <p>디테일</p>
+    </div>
+
+    <% for (let i = 0 ; i < result.todo.length; i++){ %>
+
+    <div class="white-bg">
+        <div class="list-box">
+            <h4><%= result.todo[i] %>
+            <a href="/edit/<%= result.todo[i] %>">✏️</a>
+            <span class="delete" data-date="<%= result.todo[i] %>">🗑️</span>
+            <p><%= i %></p>
+            </h4>
+        </div>
+    </div>
+
+    <% } %>
+
+    <script src="GDSC_ToDoList-FE/src/App.js"></script>
+   
+</body>
+</html>
+
+<script>
+    document.querySelectorAll('.delete')[0].addEventListener('click', function(e){
+      // e.target.dataset.id
+      fetch('/delete?docdate=' + e.target.dataset.date,{
+        method : 'DELETE'
+      })
+    }) 
+  </script>
+
+
+  <script>
+    document.querySelectorAll('.edit')[0].addEventListener('click', function(){
+      fetch('/edit?docdate=' + e.target.dataset.date, {
+        method : 'POST',
+        headers:{
+          'Context=Type' : 'application/json'
+        },
+        body : JSON.stringify({todo : 요청.body.todo[0]})
+      })
+    })
+  </script>
+
+</body>
+</html>
+

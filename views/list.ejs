@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="/main.css" rel = "stylesheet">
+</head>
+<body class="grey-bg">
+
+  
+  <%- include('nav.ejs') %>
+
+  <div class="white-bg">
+    <p> 리스트임 </p>
+  </div>
+
+  <div class="white-bg">
+    <% for (let i = 0 ; i < detail.length; i++){ %>
+      <div class="list-box">
+        <h4>
+          <a href="/detail/<%= detail.todo[i] %>">
+            <%= d.todo %>
+          </a>
+          <a href="/edit/<%= detail.todo[i] %>">✏️</a>
+          <span class="delete" data-id="<%= 글목록[i]._id %>">🗑️</span>
+        <p>글내용임</p>
+      </div>
+    <% } %>
+
+  </div> 
+
+  <script>
+    document.querySelectorAll('.delete')[0].addEventListener('click', function(e){
+      // e.target.dataset.id
+      fetch('/delete?docid=' + e.target.dataset.id,{
+        method : 'DELETE'
+      })
+    }) 
+  </script>
+
+
+  <script>
+    document.querySelectorAll('.edit')[0].addEventListener('click', function(){
+      fetch('/edit?docid=' + e.target.dataset.id, {
+        method : 'POST',
+        headers:{
+          'Context=Type' : 'application/json'
+        },
+        body : JSON.stringify({todo : 요청.body.todo})
+      })
+    })
+  </script>
+
+</body>
+</html>
+
