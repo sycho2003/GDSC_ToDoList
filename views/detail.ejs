@@ -32,6 +32,11 @@
     </div>
   <% } %>
 
+  <div>
+    <input type="text" id="new-content" placeholder="새 할일 입력">
+    <button class="add-button">추가</button>
+    <p id="error-message" style="color: red;"></p>
+  </div>
     
 <script>
   document.querySelectorAll('.delete').forEach(element =>{
@@ -88,5 +93,33 @@
     });
   });
 </script>
+
+<script>
+document.querySelector('.add-button').addEventListener('click', function() {
+  const newcontent = document.getElementById('new-content').value;
+  const id = '<%= result._id %>';
+  const errorMessage = document.getElementById('error-message');
+
+  if (newcontent.trim() === '') {
+      errorMessage.textContent = '내용을 입력해주세요.';
+      return;
+  }
+
+  fetch('/add', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ newcontent: newcontent, id: id })
+  })
+  .then(response => response.json())
+  .then(result => {
+    console.log(result);
+    location.reload(); // 추가 후 페이지 새로고침
+  })
+  .catch(error => console.error(error));
+});
+</script>
+
 </body>
 </html>
