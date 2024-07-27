@@ -18,52 +18,53 @@ function Todolist() {
   
   let navigate = useNavigate();
 
-  let [tododate, changedate]=useState('');
+  let [tododate, changedate]=useState(''); //현재 선택한 날짜
 
-  let [data, rewrite] = useState([]);
-
+  let [data, rewrite] = useState([]); //그 날짜에 해당하는 데이터 (날짜, 할일)
+/*
   useEffect(() => {
     if (tododate) {
       navigate(`/detail/${tododate}`);
     }
   }, [tododate, navigate]);
+*/
+  //let targetIndex = data.findIndex(item => item.date === tododate);
+  //let targetcontent=data.find(item => item.date === tododate)
 
-  let targetIndex = data.findIndex(item => item.date === tododate);
-  let targetcontent=data.find(item => item.date === tododate)
-
-  return ( // return 소괄호 안에는 병렬로 태그 2개 이상 기입 금지
+  return ( 
     
     <div className="App"> 
       <div className="black-nav">
         <h4 style={ {color : 'white', fontSize: '16px'} }> 
-          <input type="date" value={tododate} 
+
+          <input type="date" value={tododate} //날짜입력창, 그 밑은 날짜 선택시 일어나는 일들
           onChange={ (event)=> {changedate(event.target.value); 
           navigate(`/detail/${event.target.value}`);
-          
-          axios.get('').then((returnedData)=>rewrite(returnedData)) // 서버로부터 데이터받음
+          axios.get('').then((returnedData)=>rewrite(returnedData)) // 데이터가 존재하면 서버로부터 데이터받음
           .catch(()=>{
-            axios.post('URL', {date : event.target.value, content : ['','','']});
+            axios.post('URL', {date : event.target.value, content : ['','','']}); // 데이터가 없으면 이걸 보낸다
           })
-          }}/> <input type="text" />의 할 일 
-          <button onClick = {()=>{let newdata=[...data]; newdata[targetIndex].content=[...newdata[targetIndex].content, '']; rewrite(newdata)}}>추가</button>  
+          }}/> 
+          
+          <input type="text" />의 할 일 {/*형식상 만들어놓은 이름칸*/}
+          <button // 추가버튼
+          onClick = {()=>{let newdata=[...data]; 
+          newdata[targetIndex].content=[...newdata[targetIndex].content, '']; 
+          rewrite(newdata);
+          axios.post('URL', newdata); 
+          }}>추가</button>  
         </h4>  
       </div> 
         
 
     <Routes>
-      <Route path="/detail/:date" 
-      element={
-          <List data={data} rewrite={rewrite} tododate={tododate}> </List>}>
+      <Route path="/detail/:date" //date에 해당하는 페이지로 이동
+      element={ //하위 함수인 List를 불러와서 띄운다
+          <List data={data} rewrite={rewrite} tododate={tododate}> </List>}> 
           </Route>
       {/*<Route path="*" element={<div>잘못된 입력</div>}></Route>*/}
-
     </Routes>
-
-
-    </div>
-    
-      
-    
+    </div>    
     
   )
 }
@@ -71,44 +72,36 @@ function Todolist() {
 
 
 function List(props){
-  let [modify, setModify] = useState([]);
-  let [newData, setNewdata] = useState([...props.data]);
+  let [modify, setModify] = useState([]); //수정모드면 true
+  setModify(new Array(targetcontent.content.length).fill(false));
+  let [newData, setNewdata] = useState([...props.data]); 
   const inputRefs = useRef([]);
-  let targetIndex = props.data.findIndex(item => item.date === props.tododate);
-  let targetcontent=props.data.find(item => item.date === props.tododate)
-  useEffect(() => {
-    if (targetcontent && targetcontent.content) {
-      setModify(new Array(targetcontent.content.length).fill(false));
-    }
-  }, [targetcontent]); 
-  
-  if (!targetcontent || !targetcontent.content) {
-    return <div>선택한 날짜에 해당하는 데이터가 없습니다.</div>;
-  }
-
   return(
-    
-      //아직 서버에 있는걸 직접 바꿀 수는 없어서 사본을 만들어 띄우는 방식... data도 사본, newData도 사본 
-      //근데 생각해보니 부모에서 data를 받아오는게 아니라 자식(여기)서 data받아오면 되는거잖아?왜 이생각을못햇나
-
-
-      newData[targetIndex].content.map(function(a,i){return(
-      <div className="list"><p>{a}<button onClick={()=> { let newModify=[...modify]; newModify[i]=true; setModify(newModify)}}>수정</button> <button 
-      onClick= {()=>{ let newerData=[...newData]; newerData[targetIndex].content = newerData[targetIndex].content.filter((_, l) => l !== i); setNewdata(newerData);}}> 삭제</button> </p>
-      {modify[i] ? <p> <input type="text" ref={(el) => inputRefs.current[i] = el} ></input> <button onClick={(event)=>{ let newerData=[...newData];
-      newerData[targetIndex].content[i] = inputRefs.current[i].value;  setNewdata(newerData); let newModify=[...modify]; newModify[i]=false; setModify(newModify)}}>완료</button></p> : null} </div>
+      newData.content.map(function(a,i){ return(
+      <div className="list"><p>{a} <button 
+      //수정버튼
+      onClick={()=> { let newModify=[...modify]; newModify[i]=true; setModify(newModify)}}>수정</button> <button 
+      //삭제버튼
+      onClick= {()=>{ let newerData=[...newData]; 
+      newerData[targetIndex].content = newerData[targetIndex].content.filter((_, l) => l !== i); 
+      setNewdata(newerData);
+      axios.post('URL', newData); 
+      }}> 삭제</button> </p>
+      {/*수정모드가 켜진 항목에서 일어나는 일*/}
+      {modify[i] ? <p> <input type="text" ref={(el) => inputRefs.current[i] = el} ></input> <button 
+      //수정 완료 버튼
+      onClick={(event)=>{ let newerData=[...newData];
+      newerData[targetIndex].content[i] = inputRefs.current[i].value;  
+      setNewdata(newerData); let newModify=[...modify]; newModify[i]=false; 
+      setModify(newModify);
+      axios.post('URL', newData); 
+      }}>완료</button></p> : null}</div>
       )})
         
   )
 
 }
 
-
-function Add(props){
-
-
-
-}
 
 export default Todolist; 
 
