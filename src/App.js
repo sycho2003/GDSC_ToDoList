@@ -3,6 +3,7 @@ import './App.css';
 import { useState, useEffect, useRef } from 'react';
 import { Routes, Route, Link, useNavigate, Outlet, useParams } from 'react-router-dom'
 import database from './database.js';
+import axios from 'axios';
 
 
 /*div는 박스, p는 글, img는 이미지*/
@@ -19,7 +20,7 @@ function Todolist() {
 
   let [tododate, changedate]=useState('');
 
-  let [data, rewrite] = useState(database);
+  let [data, rewrite] = useState([]);
 
   useEffect(() => {
     if (tododate) {
@@ -35,7 +36,15 @@ function Todolist() {
     <div className="App"> 
       <div className="black-nav">
         <h4 style={ {color : 'white', fontSize: '16px'} }> 
-          <input type="date" value={tododate} onChange={ (event)=> {changedate(event.target.value); navigate(`/detail/${event.target.value}`);}}/> <input type="text" />의 할 일 
+          <input type="date" value={tododate} 
+          onChange={ (event)=> {changedate(event.target.value); 
+          navigate(`/detail/${event.target.value}`);
+          
+          axios.get('').then((returnedData)=>rewrite(returnedData)) // 서버로부터 데이터받음
+          .catch(()=>{
+            axios.post('URL', {date : event.target.value, content : ['','','']});
+          })
+          }}/> <input type="text" />의 할 일 
           <button onClick = {()=>{let newdata=[...data]; newdata[targetIndex].content=[...newdata[targetIndex].content, '']; rewrite(newdata)}}>추가</button>  
         </h4>  
       </div> 
