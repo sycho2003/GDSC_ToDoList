@@ -65,10 +65,10 @@
       element.addEventListener('click', function(e) {
         console.log('버튼 클릭됨');
 
-
+        const index = e.target.dataset.index
         const newContent = document.getElementById(`edit-content-${index}`).value;
         
-        console.log('보낼 데이터:', { id: e.target.dataset.id, index: e.target.dataset.index, content: newContent });
+        console.log('보낼 데이터:', { id: e.target.dataset.id, index: index, content: newContent });
 
         fetch('/edit', {
           method: 'PATCH',
@@ -77,7 +77,7 @@
           },
           body: JSON.stringify({
             id: e.target.dataset.id,
-            index: e.target.dataset.index,
+            index: index,
             content: encodeURIComponent(newContent)
           })
         })
