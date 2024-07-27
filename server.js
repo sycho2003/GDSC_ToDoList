@@ -9,7 +9,8 @@ app.use(express.urlencoded({extended:true}))
 const methodeOverride = require('method-override');
 app.use(methodeOverride('_method'));
 app.set('views', path.join(__dirname, 'views'))
-
+var cors = require('cors');
+app.use(cors())
 
 const { MongoClient, ObjectId } = require('mongodb');
 
