@@ -170,3 +170,24 @@ app.patch('/edit', async (요청, 응답) => {
 // })
 
 
+
+// 추가 (새 항목 추가) 지윤 
+app.post('/add', async (요청, 응답) => {
+  console.log('추가');
+  console.log(요청.body);
+
+  if (요청.body.newcontent.trim() == '') {
+    return 응답.status(400).json({ message: '내용을 입력해봐라.' }); // 이코드 잘 안됨. 사실 detail.ejs에서 한번 걸러주긴 하는데 찜찜하다. 
+  }  
+
+  try {  
+    let result = await db.collection('post').updateOne(
+      { _id: new ObjectId(요청.body.id) },
+      { $push: { content: 요청.body.newcontent } }
+    );
+    응답.json({ message: '추가 완료' });
+  } catch (e) {
+    console.log('error입니다');
+    응답.status(500).send('error입니다');
+  }
+});
