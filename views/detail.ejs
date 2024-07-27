@@ -20,16 +20,17 @@
     <div class="white-bg">
         <div class="list-box">
             <h4><%= result.content[i] %>
-            <a href="/edit/<%= encodeURIComponent(result.content[i]) %>">
-              <span class="edit" data-content="<%= encodeURIComponent(result.content[i]) %>" data-id="<%= result._id %>">✏️</span>
-            </a>
             <span class="delete" data-content="<%= encodeURIComponent(result.content[i]) %>" data-id="<%= result._id %>">🗑️</span>
-              <p><%= i %></p>
+            <span class="add" data-content="<%= encodeURIComponent(result.content[i]) %>" data-id="<%= result._id %>">'추가'</span> 
             </h4>
         </div>
     </div>
 
-    <% } %>
+    <div class="white-bg">
+      <input type="text" id="edit-content-<%= i %>" placeholder="수정사항 입력">
+      <button class="edit" data-index="<%= i %>" data-id="<%= result._id %>" id="edit-button-<%= i %>">✏️</button>
+    </div>
+  <% } %>
 
     
 <script>
@@ -54,21 +55,38 @@
 
 
 <script>
-  document.querySelectorAll('.edit')[0].addEventListener('click', function(){
-    fetch('/edit?docdate=' + e.target.dataset.date, {
-      method : 'POST',
-      headers:{
-        'Context=Type' : 'application/json'
-      },
-      body : JSON.stringify({todo : 요청.body.todo[0]})
-    })
-  })
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.edit').forEach(element => {
+      element.addEventListener('click', function(e) {
+        console.log('버튼 클릭됨');
+
+
+        const newContent = document.getElementById(`edit-content-${index}`).value;
+        
+        console.log('보낼 데이터:', { id: e.target.dataset.id, index: e.target.dataset.index, content: newContent });
+
+        fetch('/edit', {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            id: e.target.dataset.id,
+            index: e.target.dataset.index,
+            content: encodeURIComponent(newContent)
+          })
+        })
+        .then((response) => response.text())
+        .then((data) => {
+          location.reload()
+          console.log('응답 데이터:', data);
+        })
+        .catch(error => {
+          console.log('에러:', error);
+        });
+      });
+    });
+  });
 </script>
-
-</body>
-</html>
-
-
-   
 </body>
 </html>

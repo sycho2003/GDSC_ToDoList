@@ -79,12 +79,26 @@ app.post('/newpost', async(요청,응답)=>{
   }
 })
 
+app.get('/add', async(요청,응답) =>{
+  console.log('추가')
+  console.log(요청.query)
+
+  try{
+    let result = await db.collection('get').updateOne( { _id : new ObjectId (요청.query.id) }, {$pull: {content: decodeURIComponent(요청.query.doccontent)}} )
+    console.log('추가완료')
+  }
+  catch(e){
+    console.log(error)
+    응답.send(error)
+  }
+})
+
 
 ///////////////////////////////////////////////////////////////
 
 
 // 삭제
-app.delete('/delete', async (요청, 응답) => {
+app.delete('/delete', async (요청, 응답) => { 
   console.log('삭제')
   console.log(요청.query)
 
@@ -108,22 +122,38 @@ app.delete('/delete', async (요청, 응답) => {
 
 
 // 수정 (고쳐야됨)
-app.get('/edit/', async (요청, 응답) => {
-  let result = await db.collection('post').findOne({ date : (요청.params.date) },
-  function(err,result){
-    console.log(result)
-    응답.render('editer.ejs', {result : result})
-  })
+app.patch('/edit', async (요청, 응답) => {
+  console.log('수정')
+  console.log(요청.body)
+
+  try{
+    let result = await db.collection('post').findOne( { _id : new ObjectId (요청.body.id) } )
+    
+    result.content[parseInt(요청.body.index, 10)] = decodeURIComponent(요청.body.content)
+    
+    await db.collection('post').updateOne({ _id: new ObjectId(요청.body.id)}, {$set: {content:result.content}}
+    )
+    응답.send('수정 완료')
+    console.log('수정완료')
+  }
+  catch(e){
+    console.log('error입니다')
+    응답.send('error입니다')
+  }
 })
 
-app.put('/edit', async(요청,응답) => {
-  console.log('수정')
-  await db.collection('post').updateOne({date: new ObjectId(요청.body.date)},
-    {$set : {date : 요청.body.date, todo : 요청.body.todo}}, function(){
-      console.log(요청.query)
-      응답.redirect('/list')
-    })
-})
+// app.patch('/edit', asyn(요청,응답) =>{
+  
+// })
+
+// app.put('/edit', async(요청,응답) => {
+//   console.log('수정')
+//   await db.collection('post').updateOne({date: new ObjectId(요청.body.date)},
+//     {$set : {date : 요청.body.date, todo : 요청.body.todo}}, function(){
+//       console.log(요청.query)
+//       응답.redirect('/list')
+//     })
+// })
 
 
 // 수정 
