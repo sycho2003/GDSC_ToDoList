@@ -40,9 +40,9 @@ function Todolist() {
           <input type="date" value={tododate} //날짜입력창, 그 밑은 날짜 선택시 일어나는 일들
           onChange={ (event)=> {changedate(event.target.value); 
           navigate(`/detail/${event.target.value}`);
-          axios.get('').then((returnedData)=>rewrite(returnedData)) // 데이터가 존재하면 서버로부터 데이터받음
+          axios.get('').then((returnedData)=>rewrite(returnedData)) // 데이터가 존재하면 서버로부터 데이터 받아옴
           .catch(()=>{
-            axios.post('URL', {date : event.target.value, content : ['','','']}); // 데이터가 없으면 이걸 보낸다
+            axios.post('URL', {date : event.target.value, content : ['','','']}); // 데이터가 없으면 서버에게 새로운 날짜 데이터를 post해달라고 요청을 보냄.
           })
           }}/> 
           
@@ -51,7 +51,7 @@ function Todolist() {
           onClick = {()=>{let newdata=[...data]; 
           newdata[targetIndex].content=[...newdata[targetIndex].content, '']; 
           rewrite(newdata);
-          axios.post('URL', newdata); 
+          axios.post('URL', newdata); //추가버튼을 눌러 추가된 항목을 포함한 모든 데이터를 다시 서버에 보냄.
           }}>추가</button>  
         </h4>  
       </div> 
@@ -85,7 +85,7 @@ function List(props){
       onClick= {()=>{ let newerData=[...newData]; 
       newerData[targetIndex].content = newerData[targetIndex].content.filter((_, l) => l !== i); 
       setNewdata(newerData);
-      axios.post('URL', newData); 
+      axios.post('URL', newData); //삭제로 인해 변경된 전체 데이터를 서버에 전송함. 
       }}> 삭제</button> </p>
       {/*수정모드가 켜진 항목에서 일어나는 일*/}
       {modify[i] ? <p> <input type="text" ref={(el) => inputRefs.current[i] = el} ></input> <button 
@@ -94,7 +94,7 @@ function List(props){
       newerData[targetIndex].content[i] = inputRefs.current[i].value;  
       setNewdata(newerData); let newModify=[...modify]; newModify[i]=false; 
       setModify(newModify);
-      axios.post('URL', newData); 
+      axios.post('URL', newData); //서버에게 수정된 내용을 포함한 전체 데이터를 전송함
       }}>완료</button></p> : null}</div>
       )})
         
