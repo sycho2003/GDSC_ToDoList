@@ -1,4 +1,4 @@
-<!-- <!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
@@ -14,15 +14,22 @@
       <h4> </h4>
     </div>
 
+    
+
     <div>
-        <input type="date" id="new-content">
-        <a href="/detail/datedate">확인</a>
+        <input type="date" id="selectdate">
+        <a id="date-link">확인</a>
         <p id="error-message" style="color: red;"></p>
-      </div>
+    </div>
 
     <div class>
       <h4> </h4>
     </div>
 
+    <script>
+        document.getElementById('date-link').addEventListener('click', function(event) {
+            this.href = '/detail/' + document.getElementById('selectdate').value;
+        })
+    </script>
 </body>
-</html> -->
+</html>

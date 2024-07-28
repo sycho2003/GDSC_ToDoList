@@ -19,8 +19,13 @@
       <h4> </h4>
     </div>
 
-    <div class="navbar navbar-light" style="background-color: #e3f2fd;", left:50% >
-      <span class="align-middle"><%= result.date %> 의 todo를 확인해주세요</span>
+    <div class="navbar navbar-light" style="background-color: #e3f2fd;" >
+      <span class="align-right"><%= result.date %> 의 todo</span>
+      <form class = "form-inline">
+      <input type="text" id="new-content" placeholder="새 할일 입력">
+      <button class="add-button">추가</button>
+      <p id="error-message" style="color: red;"></p>
+      </form>
     </div>
 
     <div class>
@@ -28,26 +33,17 @@
     </div>
 
     <% for (let i = 0 ; i < result.content.length; i++){ %>
-
-    <div class="white-bg">
-        <div class="list-box">
-            <h5><%= result.content[i] %>
-            <span class="delete" data-content="<%= encodeURIComponent(result.content[i]) %>" data-id="<%= result._id %>">🗑️</span>
-            </h5>
-        </div>
-    </div>
-
-    <div class="white-bg">
-      <input type="text" id="edit-content-<%= i %>" placeholder="수정사항 입력">
-      <button class="edit" data-index="<%= i %>" data-id="<%= result._id %>" id="edit-button-<%= i %>">✏️</button>
+      <div class="shadow-sm p-3 mb-5 bg-white rounded">
+        <h6>
+        <p><%= i %> . <%= result.content[i] %>
+          <span class="delete" data-content="<%= encodeURIComponent(result.content[i]) %>" data-id="<%= result._id %>">🗑️</span>
+         </h6></p>
+        <input type="text" id="edit-content-<%= i %>" placeholder="수정사항 있는 경우 입력">
+        <button class="edit" data-index="<%= i %>" data-id="<%= result._id %>" id="edit-button-<%= i %>">✏️</button>
     </div>
   <% } %>
 
-  <div>
-    <input type="text" id="new-content" placeholder="새 할일 입력">
-    <button class="add-button">추가</button>
-    <p id="error-message" style="color: red;"></p>
-  </div>
+  
     
 <script>
   document.querySelectorAll('.delete').forEach(element =>{
