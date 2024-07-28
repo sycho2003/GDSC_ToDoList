@@ -2,7 +2,6 @@
 import './App.css';
 import { useState, useEffect, useRef } from 'react';
 import { Routes, Route, Link, useNavigate, Outlet, useParams } from 'react-router-dom'
-import database from './database.js';
 import axios from 'axios';
 
 
@@ -37,10 +36,10 @@ function Todolist() {
       <div className="black-nav">
         <h4 style={ {color : 'white', fontSize: '16px'} }> 
 
-          <input type="date" value={tododate} //날짜입력창, 그 밑은 날짜 선택시 일어나는 일들
+          <input type="date" value={tododate} //날짜 입력창, 그 밑은 날짜 선택시 일어나는 일들
           onChange={ (event)=> {changedate(event.target.value); 
           navigate(`/detail/${event.target.value}`);
-          axios.get('').then((returnedData)=>rewrite(returnedData)) // 데이터가 존재하면 서버로부터 데이터 받아옴
+          axios.get('http://localhost:8080/newpost').then((returnedData)=>rewrite(returnedData)) // 데이터가 존재하면 서버로부터 데이터 받아옴
           .catch(()=>{
             axios.post('URL', {date : event.target.value, content : ['','','']}); // 데이터가 없으면 서버에게 새로운 날짜 데이터를 post해달라고 요청을 보냄.
           })
@@ -49,9 +48,9 @@ function Todolist() {
           <input type="text" />의 할 일 {/*형식상 만들어놓은 이름칸*/}
           <button // 추가버튼
           onClick = {()=>{let newdata=[...data]; 
-          newdata[targetIndex].content=[...newdata[targetIndex].content, '']; 
+          newdata.content=[...newdata.content, '']; 
           rewrite(newdata);
-          axios.post('URL', newdata); //추가버튼을 눌러 추가된 항목을 포함한 모든 데이터를 다시 서버에 보냄.
+          axios.post('http://localhost:8080/newpost', newdata); //추가버튼을 눌러 추가된 항목을 포함한 모든 데이터를 다시 서버에 보냄.
           }}>추가</button>  
         </h4>  
       </div> 
@@ -73,7 +72,7 @@ function Todolist() {
 
 function List(props){
   let [modify, setModify] = useState([]); //수정모드면 true
-  setModify(new Array(targetcontent.content.length).fill(false));
+  setModify(new Array(props.data.content.length).fill(false));
   let [newData, setNewdata] = useState([...props.data]); 
   const inputRefs = useRef([]);
   return(
@@ -83,7 +82,7 @@ function List(props){
       onClick={()=> { let newModify=[...modify]; newModify[i]=true; setModify(newModify)}}>수정</button> <button 
       //삭제버튼
       onClick= {()=>{ let newerData=[...newData]; 
-      newerData[targetIndex].content = newerData[targetIndex].content.filter((_, l) => l !== i); 
+      newerData.content = newerData.content.filter((_, l) => l !== i); 
       setNewdata(newerData);
       axios.post('URL', newData); //삭제로 인해 변경된 전체 데이터를 서버에 전송함. 
       }}> 삭제</button> </p>
@@ -91,10 +90,10 @@ function List(props){
       {modify[i] ? <p> <input type="text" ref={(el) => inputRefs.current[i] = el} ></input> <button 
       //수정 완료 버튼
       onClick={(event)=>{ let newerData=[...newData];
-      newerData[targetIndex].content[i] = inputRefs.current[i].value;  
+      newerData.content[i] = inputRefs.current[i].value;  
       setNewdata(newerData); let newModify=[...modify]; newModify[i]=false; 
       setModify(newModify);
-      axios.post('URL', newData); //서버에게 수정된 내용을 포함한 전체 데이터를 전송함
+      axios.post('http://localhost:8080/newpost', newData); //서버에게 수정된 내용을 포함한 전체 데이터를 전송함
       }}>완료</button></p> : null}</div>
       )})
         
