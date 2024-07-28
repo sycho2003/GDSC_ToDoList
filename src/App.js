@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 function Todolist() {
-  // localStorage에서 데이터를 불러오거나 기본 데이터를 사용
+  // 로컬스토리지에서 데이터를 불러오거나 기본 데이터를 사용
   let initialData = JSON.parse(localStorage.getItem('todolist')) || [
     {
       date: '2024-07-01',
@@ -26,9 +26,15 @@ function Todolist() {
   const inputRefs = useRef([]);
 
   useEffect(() => {
+    const storedData = JSON.parse(localStorage.getItem('todolist'));
+    if (storedData) {
+      rewrite(storedData);
+    }
+  }, []);
+
+  useEffect(() => {
     if (tododate) {
       navigate(`/detail/${tododate}`);
-      // 날짜가 data에 있는지 확인하고 없으면 추가
       let targetIndex = data.findIndex(item => item.date === tododate);
       if (targetIndex === -1) {
         let newData = [...data, { date: tododate, content: ['', '', ''] }];
@@ -37,9 +43,9 @@ function Todolist() {
     }
   }, [tododate, data, navigate]);
 
-  // data가 변경될 때마다 localStorage에 저장
   useEffect(() => {
     if (data) {
+      console.log('Saving to localStorage:', data);
       localStorage.setItem('todolist', JSON.stringify(data));
     }
   }, [data]);
