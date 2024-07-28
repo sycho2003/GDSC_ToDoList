@@ -4,20 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 function Todolist() {
   // 로컬스토리지에서 데이터를 불러오거나 기본 데이터를 사용
-  let initialData = JSON.parse(localStorage.getItem('todolist')) || [
-    {
-      date: '2024-07-01',
-      content: ['', '', ''],
-    },
-    {
-      date: '2024-07-02',
-      content: ['', '', ''],
-    },
-    {
-      date: '2024-07-03',
-      content: ['', '', ''],
-    }
-  ];
+  let initialData = JSON.parse(localStorage.getItem('todolist')) || [];
   let [data, rewrite] = useState(initialData);
 
   let navigate = useNavigate();
