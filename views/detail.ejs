@@ -8,21 +8,32 @@
 </head>
 <body class="grey-bg">
 
+  <div class>
+    <h4> </h4>
+  </div>
+
     <%- include('nav.ejs') %>
-    <%= JSON.stringify(result) %>
+    <!-- <%= JSON.stringify(result) %> -->
     
     <div class>
-        <p>디테일</p>
+      <h4> </h4>
+    </div>
+
+    <div class="navbar navbar-light" style="background-color: #e3f2fd;", left:50% >
+      <span class="align-middle"><%= result.date %> 의 todo를 확인해주세요</span>
+    </div>
+
+    <div class>
+      <h4> </h4>
     </div>
 
     <% for (let i = 0 ; i < result.content.length; i++){ %>
 
     <div class="white-bg">
         <div class="list-box">
-            <h4><%= result.content[i] %>
+            <h5><%= result.content[i] %>
             <span class="delete" data-content="<%= encodeURIComponent(result.content[i]) %>" data-id="<%= result._id %>">🗑️</span>
-            <span class="add" data-content="<%= encodeURIComponent(result.content[i]) %>" data-id="<%= result._id %>">'추가'</span> 
-            </h4>
+            </h5>
         </div>
     </div>
 

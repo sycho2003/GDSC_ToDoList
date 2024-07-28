@@ -12,7 +12,7 @@ app.set('views', path.join(__dirname, 'views'))
 var cors = require('cors');
 app.use(cors())
 
-const { MongoClient, ObjectId } = require('mongodb');
+const { MongoClient, ObjectId, TopologyDescription } = require('mongodb');
 
 let db;
 const url = 'mongodb+srv://csoob407:fjdiw2ucoding07@forest00.hh345l9.mongodb.net/?retryWrites=true&w=majority&appName=Forest00';
@@ -29,7 +29,8 @@ new MongoClient(url).connect().then((client)=>{
 
 // 이게 날짜 선택 전 기본 창
 app.get('/', (요청, 응답) => {
-  응답.send('반갑다')
+  응답.render('home.ejs')
+
 }) 
 
 
@@ -41,44 +42,88 @@ app.get('/detail/:date',async(요청, 응답)=>{
   
   try{
     let result = await db.collection('post').findOne({date : (요청.params.date)})
-    console.log(요청.params)
-    응답.render('detail.ejs', {result: result})
+    
+    try{
+      console.log('1번', result.date)
+      console.log('2번', result)
+
+      console.log(요청.params)
+      응답.render('detail.ejs', {result: result})
+    }
+    catch(e){
+      console.log('error임')
+      if (!(요청.params.date in db.collection('post').findOne({_id : 요청.params.id}))){
+        console.log('들어오긴 함')
+        try{
+          console.log('들어왔음')
+          let result = await db.collection('post').updateOne( { _id : new ObjectId(요청.params.id) }, {$set:{date: 요청.params.date, content: ["a","b"]}}, {upsert:true} )
+          console.log(result.date)
+          console.log(result.content)
+          console.log('추가완료')
+        }
+        catch(e){
+          console.log(error)
+          응답.send(error)
+        }
+        
+      }
+    }
+
   }catch(e){
     console.log(e)
-    응답.status(404).send('이상한 url 입력')
+    응답.status(404).send('no')
   }
 })
+
+
+// 날짜에 해당하는 todo 없을 경우, 해당 날짜에 todo 생성
+app.get('/add', async(요청,응답) =>{
+  console.log('추가')
+  console.log(요청.query)
+
+  try{
+    let result = await db.collection('get').updateOne( { _id : new ObjectId (요청.query.id) }, {$: {content: decodeURIComponent(요청.query.doccontent)}} )
+    console.log('추가완료')
+  }
+  catch(e){
+    console.log(error)
+    응답.send(error)
+  }
+})
+
 
 
 ///////////////////////////////////////////////
 
 
 // 추가 (글 작성 기능)
-app.get('/write',(요청,응답)=>{
-  응답.render('write.ejs')
-})
+// app.get('/write',(요청,응답)=>{
+//   응답.render('write.ejs')
+// })
 
-app.post('/newpost', async(요청,응답)=>{
-  console.log(요청.body.todo);
 
-  try{
-    if(요청.body.todo=='' || 요청.body.date==''){
-      응답.send("error");
-    }
-    else{
-      await db.collection("post").insertOne(
-        {date: 요청.body.date, todo: 요청.body.todo},
-        function (에러, 결과) {
-          console.log("저장 완료");
-        }
-      );
-      응답.redirect('/write')
-    }
-  } catch(e){
-    console.log(e)
-    응답.status(500).send('서버 에러')
-  }
-})
+
+// app.post('/newpost', async(요청,응답)=>{
+//   console.log(요청.body.todo);
+
+//   try{
+//     if(요청.body.todo=='' || 요청.body.date==''){
+//       응답.send("error");
+//     }
+//     else{
+//       await db.collection("post").insertOne(
+//         {date: 요청.body.date, todo: 요청.body.todo},
+//         function (에러, 결과) {
+//           console.log("저장 완료");
+//         }
+//       );
+//       응답.redirect('/write')
+//     }
+//   } catch(e){
+//     console.log(e)
+//     응답.status(500).send('서버 에러')
+//   }
+// })
 
 app.get('/add', async(요청,응답) =>{
   console.log('추가')
